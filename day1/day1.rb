@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-File.read(ARGV[0]).lines.map(&:to_i).sort.combination(2){|a,b|if a+b==2020 then puts a*b end}
-
 def part_1(numbers)
   puts "Part 1"
   numbers.sort.combination(2).each do |a,b|
