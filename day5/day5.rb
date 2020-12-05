@@ -35,3 +35,12 @@ seats[1..].reduce(seats.first) do |prev, cur|
     cur
   end
 end
+
+puts "--"
+
+def pass_to_number(pass)
+  Integer(pass.gsub(/F|L/, '0').gsub(/B|R/, '1'), 2)
+end
+
+puts "Part 1 (again)"
+puts input.lines.map { |l| pass_to_number(l) }.max
