@@ -1,49 +1,67 @@
 #!/usr/bin/env ruby
-require "json"
+require "ostruct"
 
 input = File.read(ARGV[0] || "test.txt")
 
-code = input.lines.map(&:strip).map { |l| l.split(' ') }
+def flip(instr)
+  case instr.opcode
+  when "nop"
+    instr.opcode = "jmp"
+  when "jmp"
+    instr.opcode = "nop"
+  end
+  return instr
+end
 
 def run(code)
   acc = 0
-  ptr = 0
-
+  pc = 0
   hits = Hash.new(0)
 
-  while code[ptr] do
-    instr = code[ptr]
-    hits[ptr] += 1
-    puts "%04i: %s %i (%i)" % [ptr, instr[0], instr[1], hits[ptr]]
-    if hits[ptr] >= 2
-      return [:loop, acc];
-    end
-    case instr[0]
-    when "acc"
-      acc += instr[1].to_i
-    when "nop"
+  while instr = code[pc] do
+    hits[pc] += 1
 
+    #puts "%04i: %s %i (%i)" % [pc, instr.opcode, instr.value, hits[pc]]
+
+    if hits[pc] >= 2
+      return [:loop, acc]
+    end
+    case instr.opcode
+    when "acc"
+      acc += instr.value
+      pc += 1
+    when "nop"
+      pc += 1
     when "jmp"
-      ptr += instr[1].to_i
+      pc += instr.value
       next
     end
-    ptr += 1
   end
   return [:ok, acc]
 end
 
-code.each_with_index do |_, i|
-  changed = JSON.parse(JSON.generate(code)) #terrible lazy no good very bad deep copy
-  case code[i][0]
+code = input.lines.map(&:strip).map { |l| o, v = l.split(' '); OpenStruct.new(opcode: o, value: v.to_i) }
+puts "Part 1"
+puts run(code)[1]
+
+puts "Part 2"
+
+def flip(instr)
+  case instr.opcode
   when "nop"
-    changed[i][0] = "jmp"
+    instr.opcode = "jmp"
   when "jmp"
-    changed[i][0] = "nop"
+    instr.opcode = "nop"
   end
-  puts "---"
-  puts "changing [%s %i] to [%s %i]" % [code[i][0], code[i][1], changed[i][0], changed[i][1]]
-  puts changed
-  status, result = run(changed)
-  puts status, result
-  break if status == :ok
+  return instr
 end
+
+result = -1
+code.each do |instr|
+  flip(instr)
+  status, result = run(code)
+
+  break if status == :ok
+  flip(instr) #flip back before moving on
+end
+puts result
