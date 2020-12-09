@@ -4,7 +4,7 @@ require('pry')
 PREAMBLE_LENGTH = 25
 
 def valid?(preamble, number)
-  preamble.permutation(2).map { |a,b| a + b }.any?(number)
+  preamble.combination(2).map { |a,b| a + b }.any?(number)
 end
 
 puts "Part 1"
