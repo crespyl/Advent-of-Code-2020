@@ -97,16 +97,17 @@ def compute_p2(input)
                    .map { |g| g.size }
                    .each_with_object(Hash.new(0)) { |count, h| h[count] += 1 }
 
-  # options per group size scale with sum of previous 3, so we precompute table
-  # of options per group size
-  #
-  #        0  1  2
-  table = [1, 1, 2]
-  while table.size < 100
-    table << table[-3..].sum
+  # options per group size scale with sum of previous 3, so we compute and
+  # memoize the table of options
+  @table = [1, 1, 2]
+  def options(n)
+    while @table.size < n+1
+      @table << @table[-3..].sum
+    end
+    return @table[n]
   end
 
-  return group_counts.reduce(1) { |product, kv| product * table[kv[0]] ** kv[1] }
+  return group_counts.reduce(1) { |product, kv| product * options(kv[0]) ** kv[1] }
 end
 
 if MiniTest.run
