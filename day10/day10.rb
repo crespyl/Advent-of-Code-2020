@@ -66,26 +66,12 @@ class Test < MiniTest::Test
   end
 end
 
-def find_adapter(available, target)
-  available
-    .map { |x| [x - target, x] }
-    .sort
-    .first
-end
-
 def compute_p1(input)
   adapters = input.lines.map(&:to_i).sort
-  adapters << adapters.max + 3
+  adapters = [0] + adapters + [adapters.max + 3]
 
-  target = 0
-  diff_counts = Hash.new(0)
-  while ! adapters.empty?
-    diff, a = find_adapter(adapters, target)
-    #puts "%i -> %i (%i)" % [target, a, diff]
-    diff_counts[diff] += 1
-    adapters.delete(a)
-    target = a
-  end
+  diff_counts = adapters[...-1].zip(adapters[1...])
+                  .each_with_object(Hash.new(0)) { |pair, h| h[pair[1]-pair[0]] += 1 }
 
   #puts diff_counts
   return diff_counts[1] * diff_counts[3]
@@ -116,7 +102,7 @@ def compute_p2(input)
   #
   #        0  1  2
   table = [1, 1, 2]
-  while table.size < 10
+  while table.size < 100
     table << table[-3..].sum
   end
 
@@ -136,6 +122,7 @@ if MiniTest.run
   puts "\nResults:"
   puts "Part 1: %i" % @p1
   puts "Part 2: %i" % @p2
+  puts "Part 2 (log10): %i" % Math.log10(@p2)
 
 else
   puts "Test case ERR"
