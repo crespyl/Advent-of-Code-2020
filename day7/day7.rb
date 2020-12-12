@@ -11,8 +11,8 @@ input.lines.each do |line|
             .split(',')
             .map(&:strip)
             .reject{ |s| s == "no other bags" }
-            .map { |s| c = s.match(/(\d+)\s(\w+)\s(\w+)\s(.+)/).captures
-                       [c[0].to_i, c[1] << " " << c[2]] }
+            .map { |s| c = s.match(/(\d+)\s((\w+)\s(\w+))\s(.+)/).captures
+                       [c[0].to_i, c[1]] }
 
   rules[outer_bag] = inner
 end
@@ -21,7 +21,6 @@ def find_containers(rules, target)
   containers = Set.new
   rules.each do |container, contained|
     if contained.any? { |rule| rule[1] == target }
-      #puts "found that #{container} can hold #{target}"
       containers.add(container)
       containers += find_containers(rules, container)
     end

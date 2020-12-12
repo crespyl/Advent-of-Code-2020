@@ -4,9 +4,9 @@ require 'benchmark'
 require 'minitest'
 require 'pry'
 
-TEST_STR = """\
+TEST_STR = "\
 
-"""
+"
 
 class Test < MiniTest::Test
   def test_p1

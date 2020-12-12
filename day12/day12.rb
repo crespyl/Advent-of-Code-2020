@@ -4,13 +4,13 @@ require 'benchmark'
 require 'minitest'
 require 'pry'
 
-TEST_STR = """\
+TEST_STR = "\
 F10
 N3
 F7
 R90
 F11
-"""
+"
 
 class Test < MiniTest::Test
   def test_p1
