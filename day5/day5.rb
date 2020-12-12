@@ -39,7 +39,7 @@ end
 puts "--"
 
 def pass_to_number(pass)
-  Integer(pass.gsub(/F|L/, '0').gsub(/B|R/, '1'), 2)
+  Integer(pass.tr("FLBR", "0011"), 2)
 end
 
 puts "Part 1 (again)"
