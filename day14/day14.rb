@@ -29,17 +29,9 @@ class Test < MiniTest::Test
 end
 
 def apply_mask_p1(mask, num)
-  mask.reverse.chars.each_with_index do |c, i|
-    case c
-    when 'X'
-      next
-    when '0'
-      num = num & ~(1 << i)
-    when '1'
-      num = num | (1 << i)
-    end
-  end
-  return num
+  or_mask = mask.tr("X01", "001").to_i(2)
+  and_mask = mask.tr("X01", "101").to_i(2)
+  return (num | or_mask) & and_mask
 end
 
 def compute_p1(input)
@@ -63,7 +55,13 @@ def apply_mask_p2(mask, num)
   base = num | mask.tr("X","0").to_i(2)
   nums = []
 
-  floating_bits = mask.reverse.chars.each_with_index.filter { |c, i| c == 'X' }.map { |c,i| i }
+  floating_bits = mask
+                    .reverse
+                    .chars
+                    .each_with_index
+                    .filter { _1[0] == 'X' }
+                    .map { _2 }
+
   (2 ** floating_bits.size).times do |i|
     num = base
     floating_bits.each_with_index do |b, j|
