@@ -4,6 +4,8 @@ require 'benchmark'
 require 'minitest'
 require 'pry'
 
+require '../util/grid.rb'
+
 TEST_STR = """\
 L.LL.LL.LL
 LLLLLLL.LL
@@ -35,14 +37,6 @@ def get(grid, x, y)
   end
 end
 
-def neighbors(grid, x, y)
-  [[-1, -1], [0, -1], [+1, -1],
-   [-1, 0],           [+1, 0],
-   [-1, +1], [0, +1], [+1, +1]].map do |dx, dy|
-    get(grid, x+dx, y+dy)
-  end
-end
-
 def los_visible(grid, x, y)
   vectors = [[-1,-1],  [0, -1], [+1, -1],
              [-1, 0],           [+1, 0],
@@ -67,31 +61,27 @@ def los_visible(grid, x, y)
 end
 
 def compute_p1(input)
-  grid = input.lines.map(&:strip).map(&:chars)
-  width, height = grid.first.size, grid.size
+  grid = Grid.new(input)
+  grid2 = Grid.new(input)
 
   loop do
-    grid2 = grid.map(&:clone)
-
-    height.times do |y|
-      width.times do |x|
-        cur = get(grid, x,y)
-        n = neighbors(grid, x, y).count('#')
-        if cur == 'L' && n == 0
-          grid2[y][x] = '#'
-        elsif cur == '#' && n >= 4
-          grid2[y][x] = 'L'
-        end
+    grid.each_index do |x,y|
+      c = grid.get(x,y)
+      n = grid.neighbors(x,y).count('#')
+      if c == 'L' && n == 0
+        grid2.set(x,y,'#')
+      elsif c == '#' && n >= 4
+        grid2.set(x,y,'L')
+      else
+        grid2.set(x,y,c)
       end
     end
 
-    #puts grid.map { |row| row.join('') }
-
     break if grid == grid2
-    grid = grid2
+    grid, grid2 = grid2, grid
   end
 
-  return grid.flatten.count('#')
+  return grid.count('#')
 end
 
 def compute_p2(input)
@@ -122,7 +112,7 @@ def compute_p2(input)
   return grid.flatten.count('#')
 end
 
-if MiniTest.run
+if $0 == __FILE__ && MiniTest.run
   puts "Test case OK, running..."
 
   @input = File.read(ARGV[0] || "input.txt")

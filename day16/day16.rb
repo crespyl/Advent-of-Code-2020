@@ -60,7 +60,7 @@ def compute_p1(input)
 
   # read rules
   rules = {}
-  while (l = lines.next).strip.size > 0
+  while (l = lines.next).strip.size > 0 do
     r = parse_rule(l)
     rules[r[0]] = r[1..]
   end
@@ -73,7 +73,7 @@ def compute_p1(input)
   l = lines.next until l.start_with?("nearby tickets:")
   nearby_tickets = []
   begin
-    while (l = lines.next.strip).size > 0
+    while (l = lines.next.strip).size > 0 do
       nearby_tickets << l.split(',').map(&:to_i)
     end
   rescue StopIteration
@@ -95,7 +95,7 @@ def compute_p2(input, return_fields=nil)
 
   # read rules
   rules = {}
-  while (l = lines.next).strip.size > 0
+  while (l = lines.next.strip).size > 0
     r = parse_rule(l)
     rules[r[0]] = r[1..]
   end
@@ -144,7 +144,7 @@ def compute_p2(input, return_fields=nil)
   return return_fields.reduce(1) { |product, field| product * my_ticket[fields_order.index(field)] }
 end
 
-if MiniTest.run
+if $0 == __FILE__ && MiniTest.run
   puts "Test case OK, running..."
 
   @input = File.read(ARGV[0] || "input.txt")

@@ -26,7 +26,7 @@ def compute_p2(input)
 
 end
 
-if MiniTest.run
+if $0 == __FILE__ && MiniTest.run
   puts "Test case OK, running..."
 
   @input = File.read(ARGV[0] || "input.txt")
